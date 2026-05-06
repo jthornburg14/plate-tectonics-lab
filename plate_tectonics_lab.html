@@ -1,261 +1,336 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plate Tectonics Lab</title>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;font-size:15px;color:#222;background:#f5f5f5;padding:20px}
-.page{max-width:700px;margin:0 auto;background:#fff;padding:30px;border-radius:8px}
-h1{font-size:22px;font-weight:600;margin-bottom:4px}
-h2{font-size:17px;font-weight:600;margin:28px 0 8px;border-bottom:2px solid #1a5fa8;padding-bottom:6px;color:#1a5fa8}
-h3{font-size:15px;font-weight:600;margin:18px 0 6px}
-p{font-size:14px;line-height:1.6;margin-bottom:10px;color:#444}
-.subtitle{font-size:14px;color:#666;margin-bottom:24px}
-label{font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:4px}
-input[type=text],select,textarea{width:100%;font-size:14px;color:#222;background:#fff;border:1px solid #bbb;border-radius:5px;padding:8px 10px;font-family:Arial,sans-serif;margin-bottom:14px}
+body{font-family:var(--font-sans)}
+.lab{padding:1.5rem 0;max-width:680px}
+.section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1.5rem}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+.badge.active{background:#E6F1FB;color:#0C447C;border-color:#B5D4F4}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+h3{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+p{font-size:14px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:.75rem}
+p:last-child{margin-bottom:0}
+label{font-size:13px;color:var(--color-text-secondary);display:block;margin-bottom:4px}
+select,textarea,input[type=text]{width:100%;font-size:14px;color:var(--color-text-primary);background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-family:var(--font-sans)}
 textarea{resize:vertical;line-height:1.5}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.tip{background:#eef4fb;border-left:4px solid #1a5fa8;border-radius:0 5px 5px 0;padding:10px 14px;margin:10px 0 16px;font-size:13px;color:#333;line-height:1.6}
-.part-block{background:#f9f9f9;border:1px solid #ddd;border-radius:6px;padding:20px;margin-bottom:24px}
-.part-label{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;background:#1a5fa8;color:#fff;margin-bottom:12px;letter-spacing:.5px;text-transform:uppercase}
-table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:13px}
-th{text-align:left;padding:8px 10px;background:#1a5fa8;color:#fff;font-weight:600;font-size:12px}
-td{padding:8px 8px;border-bottom:1px solid #ddd;vertical-align:top}
-td:first-child{width:55px;font-weight:600;color:#333}
-td textarea{margin-bottom:0;min-height:60px}
-td select{margin-bottom:0}
-.map-section{margin-bottom:16px}
-.map-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.map-tab{font-size:13px;padding:6px 14px;border-radius:5px;border:1px solid #bbb;background:#f0f0f0;color:#333;cursor:pointer}
-.map-tab.active{background:#1a5fa8;color:#fff;border-color:#1a5fa8}
-.map-panel{display:none}
-.map-panel.active{display:block}
-.map-panel img{width:100%;border-radius:5px;border:1px solid #ddd;display:block}
-.map-legend{font-size:12px;color:#555;padding:8px 10px;background:#f5f5f5;border-radius:0 0 5px 5px;border:1px solid #ddd;border-top:none}
-.sci-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
-.sci-card{border:1px solid #ddd;border-radius:5px;padding:10px 8px;cursor:pointer;text-align:center;font-size:12px;font-weight:600;color:#333;background:#fff;transition:all .15s}
-.sci-card:hover{border-color:#1a5fa8;background:#eef4fb}
-.sci-card.selected{border-color:#1a5fa8;background:#eef4fb;color:#1a5fa8}
-.export-box{background:#f5f5f5;border:1px solid #ccc;border-radius:5px;padding:14px;font-size:13px;color:#222;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:320px;overflow-y:auto;margin-bottom:10px;font-family:monospace}
-.btn-copy{font-size:14px;padding:9px 20px;border-radius:5px;border:1px solid #1a5fa8;background:#1a5fa8;color:#fff;cursor:pointer;font-family:Arial,sans-serif}
-.btn-copy:hover{background:#154f8c}
-.confirm{font-size:13px;color:#2a7a2a;margin-top:6px;display:none}
-hr{border:none;border-top:1px solid #e0e0e0;margin:24px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.field{margin-bottom:1rem}
+.map-tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.map-tab{font-size:13px;padding:6px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;transition:all .15s}
+.map-tab.active{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.map-display{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden;margin-bottom:1rem;background:var(--color-background-secondary)}
+.map-display img{width:100%;display:block}
+.map-legend{padding:.75rem 1rem;font-size:12px;color:var(--color-text-secondary);border-top:0.5px solid var(--color-border-tertiary)}
+.boundary-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:1rem}
+.boundary-table th{text-align:left;padding:8px 10px;font-weight:500;font-size:12px;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.boundary-table td{padding:6px 8px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.boundary-table td:first-child{font-weight:500;color:var(--color-text-primary);width:60px;white-space:nowrap}
+.boundary-table textarea{min-height:60px;font-size:13px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;padding:6px 8px;width:100%;background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);resize:vertical}
+.boundary-table select{font-size:13px;padding:5px 8px}
+.add-btn{font-size:13px;color:#185FA5;background:none;border:0.5px dashed #85B7EB;border-radius:var(--border-radius-md);padding:6px 14px;cursor:pointer;width:100%;margin-bottom:1rem}
+.add-btn:hover{background:#E6F1FB}
+.remove-btn{font-size:12px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:4px;border-radius:4px}
+.remove-btn:hover{color:#E24B4A}
+.progress-bar{display:flex;gap:4px;margin-bottom:1.5rem}
+.progress-step{flex:1;height:4px;border-radius:2px;background:var(--color-background-secondary)}
+.progress-step.done{background:#378ADD}
+.progress-step.current{background:#85B7EB}
+.nav-btns{display:flex;justify-content:space-between;margin-top:1rem}
+.btn{font-size:14px;padding:8px 20px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.btn:hover{background:var(--color-background-secondary)}
+.btn.primary{background:#185FA5;color:#E6F1FB;border-color:#185FA5}
+.btn.primary:hover{background:#0C447C}
+.tip{background:var(--color-background-secondary);border-left:3px solid #85B7EB;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem;margin-bottom:1rem;font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.scientist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.scientist-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px;cursor:pointer;transition:all .15s;text-align:center}
+.scientist-card:hover{border-color:#85B7EB;background:#E6F1FB}
+.scientist-card.selected{border-color:#185FA5;background:#E6F1FB}
+.scientist-card span{font-size:12px;color:var(--color-text-secondary);display:block;margin-top:4px}
+.scientist-card strong{font-size:13px;color:var(--color-text-primary);display:block}
+.copy-area{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;font-size:13px;color:var(--color-text-primary);line-height:1.7;white-space:pre-wrap;word-break:break-word;max-height:300px;overflow-y:auto;margin-bottom:.75rem}
+.copy-btn{font-size:13px;padding:7px 16px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;display:flex;align-items:center;gap:6px}
+.copy-btn:hover{background:var(--color-background-secondary)}
+.hidden{display:none}
+.part-tag{font-size:11px;font-weight:500;padding:2px 8px;border-radius:var(--border-radius-md);background:#E1F5EE;color:#0F6E56;border:0.5px solid #9FE1CB}
 </style>
-</head>
-<body>
-<div class="page">
 
-<h1>The discovery of plate tectonics</h1>
-<p class="subtitle">Interactive Lab Exercise - Physical Geology</p>
+<div class="lab" role="main">
+<h2 style="font-size:22px;margin-bottom:.25rem">The discovery of plate tectonics</h2>
+<p style="margin-bottom:1rem">An interactive lab exercise — Physical Geology</p>
 
-<div class="part-block">
-  <span class="part-label">Setup</span>
-  <div class="row">
-    <div><label>Your name</label><input type="text" id="studentName" placeholder="First Last"></div>
-    <div><label>Date</label><input type="text" id="studentDate" placeholder="MM/DD/YYYY"></div>
-  </div>
-  <label>Scientific specialty (Part 1)</label>
-  <select id="specialty">
-    <option value="">- select one -</option>
-    <option value="Seismology">Seismology - earthquake locations and depths</option>
-    <option value="Volcanology">Volcanology - active and historic volcano locations</option>
-    <option value="Geography">Geography - topography and ocean floor bathymetry</option>
-  </select>
-  <label>Plate assignment (Part 2)</label>
-  <select id="plateChoice">
-    <option value="">- select one -</option>
-    <option>African Plate</option>
-    <option>Antarctic Plate</option>
-    <option>Arabian Plate</option>
-    <option>Australian Plate</option>
-    <option>Caribbean Plate</option>
-    <option>Cocos Plate</option>
-    <option>Eurasian Plate</option>
-    <option>Indian Plate</option>
-    <option>North American Plate</option>
-    <option>Nazca Plate</option>
-    <option>Pacific Plate</option>
-    <option>South American Plate</option>
-  </select>
+<div class="progress-bar" id="progressBar">
+  <div class="progress-step current" id="ps0"></div>
+  <div class="progress-step" id="ps1"></div>
+  <div class="progress-step" id="ps2"></div>
+  <div class="progress-step" id="ps3"></div>
+  <div class="progress-step" id="ps4"></div>
 </div>
 
-<h2>Part 1 - Analyze the maps</h2>
-<p>Use the map viewer below to study all three scientific datasets. Then focus on your chosen specialty to complete Table 1.</p>
-
-<div class="map-section">
-  <div class="map-tabs">
-    <button class="map-tab active" data-target="mapSeis">Seismology</button>
-    <button class="map-tab" data-target="mapVolc">Volcanology</button>
-    <button class="map-tab" data-target="mapGeo">Geography</button>
-    <button class="map-tab" data-target="mapBound">Plate boundaries</button>
-  </div>
-  <div id="mapSeis" class="map-panel active">
-    <img src="https://raw.githubusercontent.com/jthornburg14/plate-tectonics-lab/main/Lab%201%20Seismology.png" alt="Seismology map">
-    <div class="map-legend"><strong>Seismology:</strong> Earthquake locations 1990-1996 (magnitude 4+). Color = depth: red 0-33 km, orange 33-70 km, green 70-300 km, blue 300-700 km</div>
-  </div>
-  <div id="mapVolc" class="map-panel">
-    <img src="https://raw.githubusercontent.com/jthornburg14/plate-tectonics-lab/main/Lab%201%20Volcanology.png" alt="Volcanology map">
-    <div class="map-legend"><strong>Volcanology:</strong> Red dots = currently or historically active volcanic features (Smithsonian Institution)</div>
-  </div>
-  <div id="mapGeo" class="map-panel">
-    <img src="https://raw.githubusercontent.com/jthornburg14/plate-tectonics-lab/main/Lab%201%20Topography.png" alt="Geography map">
-    <div class="map-legend"><strong>Geography:</strong> Elevation in meters above sea level. Deep purple = deepest ocean; cyan = shallow water; green/brown = land; white = highest peaks</div>
-  </div>
-  <div id="mapBound" class="map-panel">
-    <img src="https://raw.githubusercontent.com/jthornburg14/plate-tectonics-lab/main/Lab%201%20Plate%20Map.png" alt="Plate boundaries map">
-    <div class="map-legend"><strong>Plate boundaries:</strong> Bold lines show known plate boundary locations. Use alongside your specialty map when classifying boundaries.</div>
+<div id="step0">
+  <div class="section">
+    <div class="section-header"><span class="badge active">Setup</span><h2>Before you begin</h2></div>
+    <p>In this lab you will act as a scientific specialist, analyzing real global datasets to discover the patterns that led scientists to develop the theory of plate tectonics.</p>
+    <div class="tip">Read each task carefully before entering your observations. Focus on <strong>what you see</strong> — not why you think it is that way. Scientific observation comes before interpretation.</div>
+    <div class="row">
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="studentName" placeholder="First Last">
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="text" id="studentDate" placeholder="MM/DD/YYYY">
+      </div>
+    </div>
+    <div class="field">
+      <label>Choose your scientific specialty (Part 1)</label>
+      <select id="specialty">
+        <option value="">— select one —</option>
+        <option value="seismology">Seismology — earthquake locations and depths</option>
+        <option value="volcanology">Volcanology — active and historic volcano locations</option>
+        <option value="geography">Geography — topography and ocean floor bathymetry</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Choose your plate for Part 2</label>
+      <select id="plateChoice">
+        <option value="">— select one —</option>
+        <option>African Plate</option>
+        <option>Antarctic Plate</option>
+        <option>Arabian Plate</option>
+        <option>Australian Plate</option>
+        <option>Caribbean Plate</option>
+        <option>Cocos Plate</option>
+        <option>Eurasian Plate</option>
+        <option>Indian Plate</option>
+        <option>North American Plate</option>
+        <option>Nazca Plate</option>
+        <option>Pacific Plate</option>
+        <option>South American Plate</option>
+      </select>
+    </div>
+    <div class="nav-btns"><span></span><button class="btn primary" onclick="goStep(1)">Begin lab <i class="ti ti-arrow-right" aria-hidden="true"></i></button></div>
   </div>
 </div>
 
-<div class="tip">Focus on the boundaries - what is the data doing near those bold lines? Is it dense or sparse? Symmetric or asymmetric? Consistent or variable along the boundary?</div>
+<div id="step1" class="hidden">
+  <div class="section">
+    <div class="section-header"><span class="part-tag">Part 1</span><span class="badge active">Task 1 &amp; 2</span><h2>Analyze the maps</h2></div>
+    <p>Use the map viewer below to study all three scientific datasets. Then focus on your chosen specialty to complete Table 1. You can switch between maps at any time.</p>
+    <div class="map-tabs">
+      <button class="map-tab active" onclick="showMap('seismology',this)"><i class="ti ti-point" aria-hidden="true"></i> Seismology</button>
+      <button class="map-tab" onclick="showMap('volcanology',this)"><i class="ti ti-flame" aria-hidden="true"></i> Volcanology</button>
+      <button class="map-tab" onclick="showMap('geography',this)"><i class="ti ti-mountain" aria-hidden="true"></i> Geography</button>
+      <button class="map-tab" onclick="showMap('boundaries',this)"><i class="ti ti-vector-triangle" aria-hidden="true"></i> Plate boundaries</button>
+    </div>
+    <div class="map-display">
+      <div id="mapSeismology"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Plate_tectonics_map.gif/1280px-Plate_tectonics_map.gif" alt="Seismology map" onerror="this.parentElement.innerHTML='<div style=\'padding:2rem;text-align:center;color:var(--color-text-secondary);font-size:13px\'><i class=\'ti ti-map-off\' style=\'font-size:32px;display:block;margin-bottom:.5rem\'></i>Map image not available — refer to your downloaded map PDF</div>'">
+      <div class="map-legend"><strong>Seismology:</strong> Earthquake locations 1990–1996 (magnitude 4+). Color = depth: red 0–33 km, orange 33–70 km, green 70–300 km, blue 300–700 km</div></div>
+      <div id="mapVolcanology" class="hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Global_Volcanism_Program_map.jpg/1280px-Global_Volcanism_Program_map.jpg" alt="Volcanology map" onerror="this.parentElement.innerHTML='<div style=\'padding:2rem;text-align:center;color:var(--color-text-secondary);font-size:13px\'><i class=\'ti ti-map-off\' style=\'font-size:32px;display:block;margin-bottom:.5rem\'></i>Map image not available — refer to your downloaded map PDF</div>'">
+      <div class="map-legend"><strong>Volcanology:</strong> Red dots = currently or historically active volcanic features (Smithsonian Institution)</div></div>
+      <div id="mapGeography" class="hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Elevation.jpg/1280px-Elevation.jpg" alt="Geography map" onerror="this.parentElement.innerHTML='<div style=\'padding:2rem;text-align:center;color:var(--color-text-secondary);font-size:13px\'><i class=\'ti ti-map-off\' style=\'font-size:32px;display:block;margin-bottom:.5rem\'></i>Map image not available — refer to your downloaded map PDF</div>'">
+      <div class="map-legend"><strong>Geography:</strong> Elevation in meters above sea level. Pink/purple = deepest ocean; cyan = shallow water; green/brown = land; white = highest peaks</div></div>
+      <div id="mapBoundaries" class="hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Plates_tect2_en.svg/1280px-Plates_tect2_en.svg.png" alt="Plate boundaries map" onerror="this.parentElement.innerHTML='<div style=\'padding:2rem;text-align:center;color:var(--color-text-secondary);font-size:13px\'><i class=\'ti ti-map-off\' style=\'font-size:32px;display:block;margin-bottom:.5rem\'></i>Map image not available — refer to your downloaded map PDF</div>'">
+      <div class="map-legend"><strong>Plate boundaries:</strong> Bold lines show known plate boundary locations. Use this map with your PDF copy for classification tasks.</div></div>
+    </div>
+    <div class="tip">Focus on the <strong>boundaries</strong> — what is the data doing near those bold lines? Is it dense or sparse? Symmetric or asymmetric? Consistent or variable along the boundary?</div>
+    <h3>Table 1 — proposed boundary type descriptions</h3>
+    <p style="margin-bottom:.75rem">Based on your specialty map only. Classify what you observe (no names needed — you can use numbers 1–5). Minimum 3 types required.</p>
+    <table class="boundary-table" id="table1">
+      <thead><tr><th>Type</th><th>Description — what characteristics in your data identify this boundary type?</th></tr></thead>
+      <tbody id="t1body">
+        <tr><td>1</td><td><textarea placeholder="Describe what you observe at this boundary type..."></textarea></td></tr>
+        <tr><td>2</td><td><textarea placeholder="Describe what you observe at this boundary type..."></textarea></td></tr>
+        <tr><td>3</td><td><textarea placeholder="Describe what you observe at this boundary type..."></textarea></td></tr>
+      </tbody>
+    </table>
+    <button class="add-btn" onclick="addRow('t1body','t1')"><i class="ti ti-plus" aria-hidden="true"></i> Add boundary type (up to 5)</button>
+    <div class="nav-btns">
+      <button class="btn" onclick="goStep(0)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button>
+      <button class="btn primary" onclick="goStep(2)">Continue to Part 2 <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
 
-<h3>Table 1 - proposed boundary type descriptions</h3>
-<p>Based on your specialty map only. Minimum 3 types, maximum 5. You do not need to name them - numbers are fine.</p>
-<table>
-  <thead><tr><th>Type</th><th>Description - what characteristics in your data identify this boundary type?</th></tr></thead>
-  <tbody>
-    <tr><td>1</td><td><textarea placeholder="Describe what you observe..."></textarea></td></tr>
-    <tr><td>2</td><td><textarea placeholder="Describe what you observe..."></textarea></td></tr>
-    <tr><td>3</td><td><textarea placeholder="Describe what you observe..."></textarea></td></tr>
-    <tr><td>4</td><td><textarea placeholder="Optional - add a 4th type if needed"></textarea></td></tr>
-    <tr><td>5</td><td><textarea placeholder="Optional - add a 5th type if needed"></textarea></td></tr>
-  </tbody>
-</table>
+<div id="step2" class="hidden">
+  <div class="section">
+    <div class="section-header"><span class="part-tag">Part 2</span><span class="badge active">Task 1 &amp; 2</span><h2>Integrate all three datasets</h2></div>
+    <p>You've analyzed your specialty. Now examine all three maps together and apply that combined view to the boundaries of your chosen plate: <strong id="plateName2">—</strong></p>
+    <div class="tip">Compare all three maps at the same boundary. Does seismicity, volcanism, and topography all behave the same way at this boundary, or differently? Asymmetry — data behaving differently on each side of a boundary — is an important clue.</div>
+    <h3>Table 2 — new boundary type descriptions (all three datasets)</h3>
+    <p style="margin-bottom:.75rem">Describe each boundary type using evidence from all three specialties. Then match to the accepted scientific classification.</p>
+    <table class="boundary-table" id="table2">
+      <thead><tr><th>Type</th><th>Description — integrate all three data types</th><th style="width:160px">Scientific type</th></tr></thead>
+      <tbody id="t2body">
+        <tr><td>A</td><td><textarea placeholder="What do seismicity, volcanism, and topography all show at this type of boundary?"></textarea></td>
+        <td><select><option value="">— select —</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
+        <tr><td>B</td><td><textarea placeholder="What do seismicity, volcanism, and topography all show at this type of boundary?"></textarea></td>
+        <td><select><option value="">— select —</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
+        <tr><td>C</td><td><textarea placeholder="What do seismicity, volcanism, and topography all show at this type of boundary?"></textarea></td>
+        <td><select><option value="">— select —</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
+      </tbody>
+    </table>
+    <button class="add-btn" onclick="addRow2('t2body')"><i class="ti ti-plus" aria-hidden="true"></i> Add boundary type (up to 5)</button>
+    <div class="nav-btns">
+      <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button>
+      <button class="btn primary" onclick="goStep(3)">Continue to Part 3 <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
 
-<h2>Part 2 - Integrate all three datasets</h2>
-<p>Now examine all three maps together and apply that combined view to the boundaries of your chosen plate. Use the map tabs above to compare all three datasets side by side.</p>
-<div class="tip">Asymmetry - data behaving differently on each side of a boundary - is an important clue about what type of boundary it is.</div>
+<div id="step3" class="hidden">
+  <div class="section">
+    <div class="section-header"><span class="part-tag">Part 3</span><span class="badge active">Hypothesis &amp; Homework</span><h2>Forming a hypothesis</h2></div>
+    <p>A hypothesis is a testable explanation for observed patterns. Based on your map analysis, write a hypothesis statement using your specialty data.</p>
+    <div class="tip"><strong>Example format:</strong> "Based on the observations of current [specialty] data, I predict that ___________."</div>
+    <div class="field">
+      <label>Your specialty for this hypothesis</label>
+      <select id="hypSpecialty">
+        <option value="">— select —</option>
+        <option>Seismology</option>
+        <option>Volcanology</option>
+        <option>Geography</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Your hypothesis statement</label>
+      <textarea id="hypothesis" rows="4" placeholder="Based on the observations of current _______ data, I predict that..."></textarea>
+    </div>
+    <div class="field">
+      <label>How would you test this hypothesis? What evidence would support or disprove it?</label>
+      <textarea id="hypTest" rows="3" placeholder="To test this hypothesis, I would look for..."></textarea>
+    </div>
+    <hr style="border:none;border-top:0.5px solid var(--color-border-tertiary);margin:1.25rem 0">
+    <h3>Homework — pioneers of plate tectonics</h3>
+    <p>Choose one scientist who contributed to the theory of plate tectonics. Research their time frame and contribution and write a paragraph describing your findings.</p>
+    <div class="scientist-grid" id="sciGrid">
+    </div>
+    <div class="field">
+      <label>Selected scientist <span id="sciSelected" style="color:#185FA5;font-weight:500"></span></label>
+      <textarea id="sciParagraph" rows="5" placeholder="Write your paragraph here. Include their time period, what data or methods they used, and what specific contribution they made to our understanding of plate tectonics..."></textarea>
+    </div>
+    <div class="nav-btns">
+      <button class="btn" onclick="goStep(2)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Back</button>
+      <button class="btn primary" onclick="goStep(4)">Review &amp; export <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
 
-<h3>Table 2 - integrated boundary type descriptions</h3>
-<p>Describe each boundary type using evidence from all three specialties, then match to the accepted scientific classification.</p>
-<table>
-  <thead><tr><th>Type</th><th>Description - integrate all three data types</th><th style="width:150px">Scientific type</th></tr></thead>
-  <tbody>
-    <tr><td>A</td><td><textarea placeholder="What do seismicity, volcanism, and topography show here?"></textarea></td>
-    <td><select><option value="">- select -</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
-    <tr><td>B</td><td><textarea placeholder="What do seismicity, volcanism, and topography show here?"></textarea></td>
-    <td><select><option value="">- select -</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
-    <tr><td>C</td><td><textarea placeholder="What do seismicity, volcanism, and topography show here?"></textarea></td>
-    <td><select><option value="">- select -</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
-    <tr><td>D</td><td><textarea placeholder="Optional - add a 4th type if needed"></textarea></td>
-    <td><select><option value="">- select -</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
-    <tr><td>E</td><td><textarea placeholder="Optional - add a 5th type if needed"></textarea></td>
-    <td><select><option value="">- select -</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td></tr>
-  </tbody>
-</table>
-
-<h2>Part 3 - Forming a hypothesis</h2>
-<p>A hypothesis is a testable explanation for observed patterns. Write a hypothesis based on your specialty data.</p>
-<div class="tip">Example: "Based on the observations of current [specialty] data, I predict that ___________."</div>
-
-<label>Your specialty for this hypothesis</label>
-<select id="hypSpecialty">
-  <option value="">- select -</option>
-  <option>Seismology</option>
-  <option>Volcanology</option>
-  <option>Geography</option>
-</select>
-
-<label>Your hypothesis statement</label>
-<textarea id="hypothesis" rows="4" placeholder="Based on the observations of current _______ data, I predict that..."></textarea>
-
-<label>How would you test this hypothesis?</label>
-<textarea id="hypTest" rows="3" placeholder="To test this hypothesis, I would look for..."></textarea>
-
-<hr>
-
-<h2>Homework - pioneers of plate tectonics</h2>
-<p>Choose one scientist below who contributed to the theory of plate tectonics. Research their time frame and contribution and write a paragraph describing your findings.</p>
-
-<div class="sci-grid" id="sciGrid"></div>
-
-<label>Selected scientist: <span id="sciSelectedLabel" style="color:#1a5fa8;font-weight:700"></span></label>
-<input type="hidden" id="sciSelected" value="">
-<textarea id="sciParagraph" rows="6" placeholder="Write your paragraph here. Include their time period, what data or methods they used, and what specific contribution they made..."></textarea>
-
-<hr>
-
-<h2>Export your responses</h2>
-<p>When you are finished, click the button below to compile your answers, then copy and paste the text into your Canvas assignment submission box.</p>
-<button class="btn-copy" id="btnCompile">Compile my responses</button>
-<p class="confirm" id="compileConfirm">Done - your responses are ready to copy below.</p>
-<div class="export-box" id="exportBox" style="margin-top:12px"></div>
-<button class="btn-copy" id="btnCopy" style="margin-top:8px;background:#2a7a2a;border-color:#2a7a2a;display:none">Copy to clipboard</button>
-<p class="confirm" id="copyConfirm">Copied to clipboard - paste into your Canvas submission.</p>
-
+<div id="step4" class="hidden">
+  <div class="section">
+    <div class="section-header"><span class="badge active">Complete</span><h2>Review &amp; submit</h2></div>
+    <p>Your responses are compiled below. Copy this text and paste it into your LMS submission.</p>
+    <div class="copy-area" id="exportText"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="copy-btn" onclick="copyExport()"><i class="ti ti-copy" aria-hidden="true"></i> Copy to clipboard</button>
+      <button class="copy-btn" onclick="goStep(0)"><i class="ti ti-refresh" aria-hidden="true"></i> Start over</button>
+    </div>
+    <p id="copyConfirm" class="hidden" style="margin-top:.5rem;font-size:13px;color:#0F6E56"><i class="ti ti-check" aria-hidden="true"></i> Copied to clipboard</p>
+  </div>
+</div>
 </div>
 
 <script>
-(function(){
-  var scientists=["Alfred Wegener","Arthur Holmes","Harry Hess","D.H. Matthews","Frederic Vine","Bruce Heezen","Marie Tharp","J. Tuzo Wilson","Edward Bullard","Maurice Ewing","W. Jason Morgan","Dan McKenzie","Florence Bascom"];
+const scientists = ["Alfred Wegener","Arthur Holmes","Harry Hess","D.H. Matthews","Frederic Vine","Bruce Heezen","Marie Tharp","J. Tuzo Wilson","Edward Bullard","Maurice Ewing","W. Jason Morgan","Dan McKenzie","Florence Bascom"];
+let t1count = 3, t2count = 3, selectedSci = "";
 
-  var g=document.getElementById("sciGrid");
-  scientists.forEach(function(s){
-    var c=document.createElement("div");
-    c.className="sci-card";
-    c.textContent=s;
-    c.addEventListener("click",function(){
-      document.querySelectorAll(".sci-card").forEach(function(x){x.classList.remove("selected");});
-      c.classList.add("selected");
-      document.getElementById("sciSelected").value=s;
-      document.getElementById("sciSelectedLabel").textContent=s;
-    });
+function init(){
+  const g = document.getElementById('sciGrid');
+  scientists.forEach(s=>{
+    const c = document.createElement('div');
+    c.className='scientist-card';
+    c.innerHTML=`<strong>${s}</strong>`;
+    c.onclick=()=>{
+      document.querySelectorAll('.scientist-card').forEach(x=>x.classList.remove('selected'));
+      c.classList.add('selected');
+      selectedSci=s;
+      document.getElementById('sciSelected').textContent='— '+s;
+    };
     g.appendChild(c);
   });
+}
 
-  document.querySelectorAll(".map-tab").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      document.querySelectorAll(".map-tab").forEach(function(b){b.classList.remove("active");});
-      document.querySelectorAll(".map-panel").forEach(function(p){p.classList.remove("active");});
-      btn.classList.add("active");
-      var t=document.getElementById(btn.getAttribute("data-target"));
-      if(t) t.classList.add("active");
-    });
-  });
+function goStep(n){
+  for(let i=0;i<5;i++){
+    const s=document.getElementById('step'+i);
+    s.classList.toggle('hidden',i!==n);
+    const p=document.getElementById('ps'+i);
+    if(i<n)p.style.background='#378ADD';
+    else if(i===n)p.style.background='#85B7EB';
+    else p.style.background='var(--color-background-secondary)';
+  }
+  if(n===2) document.getElementById('plateName2').textContent=document.getElementById('plateChoice').value||'(not selected)';
+  if(n===4) buildExport();
+  window.scrollTo(0,0);
+}
 
-  document.getElementById("btnCompile").addEventListener("click",function(){
-    var rows1=document.querySelectorAll("table:nth-of-type(1) tbody tr");
-    var rows2=document.querySelectorAll("table:nth-of-type(2) tbody tr");
-    var out="PLATE TECTONICS LAB - SUBMISSION\n";
-    out+="Name: "+(document.getElementById("studentName").value||"(not entered)")+"\n";
-    out+="Date: "+(document.getElementById("studentDate").value||"(not entered)")+"\n";
-    out+="Specialty: "+(document.getElementById("specialty").value||"(not selected)")+"\n";
-    out+="Plate: "+(document.getElementById("plateChoice").value||"(not selected)")+"\n\n";
-    out+="PART 1 - TABLE 1\n";
-    rows1.forEach(function(tr){
-      var lbl=tr.cells[0].textContent.trim();
-      var val=tr.querySelector("textarea").value.trim();
-      if(val) out+="Type "+lbl+": "+val+"\n";
-    });
-    out+="\nPART 2 - TABLE 2\n";
-    rows2.forEach(function(tr){
-      var lbl=tr.cells[0].textContent.trim();
-      var val=tr.querySelector("textarea").value.trim();
-      var sci=tr.querySelector("select").value;
-      if(val) out+="Type "+lbl+": "+val+"\nScientific classification: "+(sci||"(not selected)")+"\n";
-    });
-    out+="\nPART 3 - HYPOTHESIS\n";
-    out+="Specialty: "+(document.getElementById("hypSpecialty").value||"(not selected)")+"\n";
-    out+="Hypothesis: "+(document.getElementById("hypothesis").value||"(blank)")+"\n";
-    out+="How to test: "+(document.getElementById("hypTest").value||"(blank)")+"\n";
-    out+="\nHOMEWORK\n";
-    out+="Scientist: "+(document.getElementById("sciSelected").value||"(not selected)")+"\n";
-    out+=(document.getElementById("sciParagraph").value||"(blank)");
-    document.getElementById("exportBox").textContent=out;
-    document.getElementById("btnCopy").style.display="inline-block";
-    document.getElementById("compileConfirm").style.display="block";
+function showMap(type, btn){
+  ['Seismology','Volcanology','Geography','Boundaries'].forEach(t=>{
+    document.getElementById('map'+t).classList.add('hidden');
   });
+  document.querySelectorAll('.map-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('map'+type.charAt(0).toUpperCase()+type.slice(1)).classList.remove('hidden');
+  btn.classList.add('active');
+}
 
-  document.getElementById("btnCopy").addEventListener("click",function(){
-    var t=document.getElementById("exportBox").textContent;
-    navigator.clipboard.writeText(t).then(function(){
-      document.getElementById("copyConfirm").style.display="block";
-    });
+function addRow(tbodyId, prefix){
+  const tbody=document.getElementById(tbodyId);
+  if(t1count>=5)return;
+  t1count++;
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${t1count} <button class="remove-btn" onclick="removeRow(this)" aria-label="Remove row"><i class="ti ti-x" aria-hidden="true"></i></button></td><td><textarea placeholder="Describe what you observe at this boundary type..."></textarea></td>`;
+  tbody.appendChild(tr);
+}
+
+function addRow2(tbodyId){
+  const tbody=document.getElementById(tbodyId);
+  if(t2count>=5)return;
+  t2count++;
+  const labels=['A','B','C','D','E'];
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${labels[t2count-1]} <button class="remove-btn" onclick="removeRow(this)" aria-label="Remove row"><i class="ti ti-x" aria-hidden="true"></i></button></td><td><textarea placeholder="What do seismicity, volcanism, and topography all show at this type of boundary?"></textarea></td><td><select><option value="">— select —</option><option>Convergent</option><option>Divergent</option><option>Transform</option><option>Uncertain</option></select></td>`;
+  tbody.appendChild(tr);
+}
+
+function removeRow(btn){btn.closest('tr').remove();}
+
+function buildExport(){
+  const name=document.getElementById('studentName').value||'(not entered)';
+  const date=document.getElementById('studentDate').value||'(not entered)';
+  const spec=document.getElementById('specialty').value||'(not selected)';
+  const plate=document.getElementById('plateChoice').value||'(not selected)';
+  let out=`PLATE TECTONICS LAB — SUBMISSION\nName: ${name}\nDate: ${date}\nSpecialty: ${spec}\nAssigned plate: ${plate}\n\n`;
+  out+='PART 1 — TABLE 1: BOUNDARY TYPE DESCRIPTIONS\n';
+  out+='(Based on '+spec+' data)\n';
+  document.querySelectorAll('#t1body tr').forEach((tr,i)=>{
+    const type=tr.cells[0].textContent.trim().replace(/[×✕]/g,'').trim();
+    const desc=tr.querySelector('textarea')?.value||'(blank)';
+    out+=`Type ${type}: ${desc}\n`;
   });
-})();
+  out+='\nPART 2 — TABLE 2: INTEGRATED BOUNDARY DESCRIPTIONS\n';
+  out+=`(Plate: ${plate})\n`;
+  document.querySelectorAll('#t2body tr').forEach((tr,i)=>{
+    const type=tr.cells[0].textContent.trim().replace(/[×✕]/g,'').trim();
+    const desc=tr.querySelector('textarea')?.value||'(blank)';
+    const sci=tr.querySelector('select')?.value||'(not selected)';
+    out+=`Type ${type}: ${desc}\nScientific classification: ${sci}\n`;
+  });
+  const hypSpec=document.getElementById('hypSpecialty').value||'(not selected)';
+  const hyp=document.getElementById('hypothesis').value||'(blank)';
+  const hypT=document.getElementById('hypTest').value||'(blank)';
+  const sciPar=document.getElementById('sciParagraph').value||'(blank)';
+  out+=`\nPART 3 — HYPOTHESIS\nSpecialty: ${hypSpec}\nHypothesis: ${hyp}\nHow to test: ${hypT}\n\nHOMEWORK — PLATE TECTONICS PIONEER\nScientist chosen: ${selectedSci||'(not selected)'}\n${sciPar}`;
+  document.getElementById('exportText').textContent=out;
+}
+
+function copyExport(){
+  const t=document.getElementById('exportText').textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const c=document.getElementById('copyConfirm');
+    c.classList.remove('hidden');
+    setTimeout(()=>c.classList.add('hidden'),2500);
+  });
+}
+
+init();
 </script>
-</body>
-</html>
